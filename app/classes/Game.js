@@ -1,3 +1,5 @@
+import {Loop} from './Loop';
+
 export default class Game {
     constructor(){
 
@@ -5,20 +7,16 @@ export default class Game {
         this.vx = 0.08;
         this.ctx = document.querySelector('canvas').getContext('2d');
 
-        this.maxFPS = 120;
-        this.fps = this.maxFPS;
-        this.lastFrameTimeMs = 0;
-        this.delta = 0;
-        this.timestep = 1000 / this.maxFPS;
-        this.framesThisSecond = 0;
-        this.lastFpsUpdate = 0;
+        this.loop = new Loop({maxFPS: 60});
 
         requestAnimationFrame(this.main.bind(this));
     }
-
+    //Get and set
+    getLoop(){
+        return this.loop;
+    }
     //Calculate all
     update(delta){
-        //console.log('update');
         this.bx += this.vx * delta;
         if(this.bx >= 200){
             this.vx = -0.08;
@@ -27,10 +25,9 @@ export default class Game {
             this.vx = 0.08;
         }
     }
-
     //Draw objects
     draw(){
-        document.querySelector('#gameFps').textContent = `${Math.round(this.fps)} fps`;
+        document.querySelector('#gameFps').textContent = `${Math.round(this.loop.fps)} fps`;
         let ctx = this.ctx
         ctx.fillStyle = 'white';
         ctx.fillRect(0,0,500,500);
@@ -40,38 +37,37 @@ export default class Game {
 
     //Saven when spiral of death
     panic() {
-        this.delta = 0;
+        this.loop.setDelta(0);
         console.log('Panic!');
     }
 
     //Game loop
     main(timestamp){
 
-        if (timestamp < this.lastFrameTimeMs + (1000 / this.maxFPS)) {
+        if (timestamp < this.loop.lastFrameTimeMs + (1000 / this.loop.maxFPS)) {
             requestAnimationFrame(this.main.bind(this));
             return;
         }
-        this.delta = timestamp - this.lastFrameTimeMs;
-        this.lastFrameTimeMs = timestamp;
+        this.loop.setDelta(timestamp - this.loop.lastFrameTimeMs);
+        this.loop.lastFrameTimeMs = timestamp;
 
-        if(timestamp > this.lastFpsUpdate + 1000) {
-            this.fps = 0.25 * this.framesThisSecond + 0.75 * this.fps;
+        if(timestamp > this.loop.lastFpsUpdate + 1000) {
+            this.loop.fps = 0.25 * this.loop.framesThisSecond + 0.75 * this.loop.fps;
     
-            this.lastFpsUpdate = timestamp;
-            this.framesThisSecond = 0;
+            this.loop.lastFpsUpdate = timestamp;
+            this.loop.framesThisSecond = 0;
         }
-        this.framesThisSecond++;
+        this.loop.framesThisSecond++;
 
         let numUpdateSteps = 0;
-        while(this.delta >= this.timestep){
-            this.update(this.timestep);
-            this.delta -= this.timestep;
+        while(this.loop.getDelta() >= this.loop.timestep){
+            this.update(this.loop.timestep);
+            this.loop.setDelta(this.loop.getDelta() - this.loop.timestep);
             if(numUpdateSteps++ >= 240){
                 this.panic();
                 break;
             }
         }
-
 
         this.draw();
         requestAnimationFrame(this.main.bind(this));
