@@ -1,21 +1,26 @@
+import GLOBALS from './../globals/globals';
+
 import {Loop} from './Loop';
+import {guiUnit} from './gui/guiUnit';
 
-export default class Game {
-    constructor(){
+export class Game {
+    constructor({canvas} = {}){
 
-        this.bx = 0;
-        this.vx = 0.08;
-        this.ctx = document.querySelector('canvas').getContext('2d');
-
+        this.canvas = canvas;
+        this.drawground = canvas.context;
         this.loop = new Loop({maxFPS: 60});
 
+        GLOBALS.GGO = this;
         requestAnimationFrame(this.main.bind(this));
     }
-    //Get and set
-    getLoop(){
-        return this.loop;
+    // ### REGULAR FXS ###
+    getCanvasWidth() {
+        return this.canvas.w;
     }
-    //Calculate all
+    getCanvasHeight() {
+        return this.canvas.h;
+    }
+    // --- CALCULATE ---
     update(delta){
         this.bx += this.vx * delta;
         if(this.bx >= 200){
@@ -25,30 +30,26 @@ export default class Game {
             this.vx = 0.08;
         }
     }
-    //Draw objects
+    // --- DRAW ---
     draw(){
         document.querySelector('#gameFps').textContent = `${Math.round(this.loop.fps)} fps`;
-        let ctx = this.ctx
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0,0,500,500);
-        ctx.fillStyle = 'red';
-        ctx.fillRect(this.bx,40,20,20);
+
     }
 
-    //Saven when spiral of death
+    // --- DEATH SPIRAL EMERGENCY ----
     panic() {
-        this.loop.setDelta(0);
+        this.loop.delta = 0;
         console.log('Panic!');
     }
 
-    //Game loop
+    // !!! GAME LOOP 1!!
     main(timestamp){
 
         if (timestamp < this.loop.lastFrameTimeMs + (1000 / this.loop.maxFPS)) {
             requestAnimationFrame(this.main.bind(this));
             return;
         }
-        this.loop.setDelta(timestamp - this.loop.lastFrameTimeMs);
+        this.loop.delta = timestamp - this.loop.lastFrameTimeMs;
         this.loop.lastFrameTimeMs = timestamp;
 
         if(timestamp > this.loop.lastFpsUpdate + 1000) {
@@ -60,9 +61,9 @@ export default class Game {
         this.loop.framesThisSecond++;
 
         let numUpdateSteps = 0;
-        while(this.loop.getDelta() >= this.loop.timestep){
+        while(this.loop.delta >= this.loop.timestep){
             this.update(this.loop.timestep);
-            this.loop.setDelta(this.loop.getDelta() - this.loop.timestep);
+            this.loop.delta -= this.loop.timestep;
             if(numUpdateSteps++ >= 240){
                 this.panic();
                 break;

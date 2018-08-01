@@ -1,7 +1,7 @@
-import Canvas from './classes/Canvas';
-import Game from './classes/Game';
+import GLOBALS from './globals/globals';
+
+import {Canvas} from './classes/Canvas';
+import {Game} from './classes/Game';
 
 let c = new Canvas(document.querySelector('canvas'));
-console.log(c);
-
-let g = new Game();
+let g = new Game({canvas: c});

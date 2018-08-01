@@ -8,10 +8,4 @@ export class Loop {
         this.framesThisSecond = 0;
         this.lastFpsUpdate = 0;
     }
-    setDelta(value) {
-        this.delta = value;
-    }
-    getDelta(value){
-        return this.delta;
-    }
 }
