@@ -1,21 +1,21 @@
-import GLOBALS from './../../globals/globals';
+import GLOBAL from './../../globals/globals';
 
 export default class guiUnit {
-    constructor(x,y,w,h,visible, background) {
+    constructor({x,y,w,h,visible = true, background = null}) {
 
         this.background = background;
-        this.drawground = GLOBALS.CTX;
+        this.drawground = GLOBALS.CANVAS.contex;
         this.w = w;
         this.h = h;
         this.visible = visible;
         
         if(typeof(x) === 'object'){
-            this.x1 = (GLOBALS.GGO.getCanvasWidth()/2 - this.w/2) + x.m;
+            this.x1 = (GLOBAS.GAME.getCanvasWidth()/2 - this.w/2) + x.m;
         } else if(typeof(x) === 'number'){
             this.x1 = x;
         } 
         if(typeof(y) === 'object'){
-            this.y1 = (GLOBALS.GGO.getCanvasWidth()/2 - this.h/2) + y.m;
+            this.y1 = (GLOBAL.GAME.getCanvasWidth()/2 - this.h/2) + y.m;
         } else if(typeof(y) === 'number'){
             this.y1 = y;
         }

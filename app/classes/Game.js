@@ -2,6 +2,8 @@ import GLOBAL from './../globals/globals';
 
 import Loop from './Loop';
 import Button from './gui/Button';
+import Button from './gui/View';
+import View from './gui/View';
 
 export default class Game {
     // ### CONSTRUCTOR ###
@@ -12,6 +14,14 @@ export default class Game {
         this.loop = new Loop({maxFPS: 60});
         this.mode = mode;
 
+        this.mx = null;
+        this.my = null;
+
+        this.views = [];
+
+        document.addEventListener('mousemove', this.mouseMove.bind(this));
+        document.addEventListener('click', this.mouseClick.bind(this));
+        
         GLOBAL.GAME = this; //bind this for global game object
         requestAnimationFrame(this.main.bind(this)); //start game loop
     }
@@ -22,7 +32,15 @@ export default class Game {
     getCanvasHeight() {
         return this.canvas.h;
     }
-    // --- CALCULATE ---
+    // ### EVENTS ###
+    mouseMove(evt){
+        this.mx = evt.clientX;
+        this.my = evt.clientY;
+    }
+    mouseClick(evt){
+        console.log(`X: ${evt.clientX} Y: ${evt.clientY}`);
+    }
+    // ### RELATED TO GAME LOOP ###
     update(delta){
         this.bx += this.vx * delta;
         if(this.bx >= 200){
@@ -32,18 +50,14 @@ export default class Game {
             this.vx = 0.08;
         }
     }
-    // --- DRAW ---
     draw(){
         document.querySelector('#gameFps').textContent = `${Math.round(this.loop.fps)} fps`;
     }
-
-    // --- DEATH SPIRAL EMERGENCY ----
     panic() {
         this.loop.delta = 0;
         console.log('Panic!');
     }
-
-    // !!! GAME LOOP !!!
+    // ### GAME LOOP ###
     main(timestamp){
 
         if (timestamp < this.loop.lastFrameTimeMs + (1000 / this.loop.maxFPS)) {

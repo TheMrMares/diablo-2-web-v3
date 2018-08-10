@@ -1,8 +1,8 @@
 import guiUnit from './guiUnit';
 
 export default class Button extends guiUnit {
-    constructor({x, y, w, h, visible = true, background, onClick = null, onMouseenter = null, onMouseleave = null}){
-        super(x,y,w,h,visible, background);
+    constructor({x, y, w, h, visible, background, onClick = null, onMouseenter = null, onMouseleave = null}){
+        super({x: x,y: y,w: w,h: h,visible: visible, background: background});
         
         this.onClick = onClick;
         this.onMouseenter = onMouseenter;
