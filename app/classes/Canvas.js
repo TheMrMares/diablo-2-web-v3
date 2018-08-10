@@ -1,4 +1,6 @@
-export class Canvas {
+import GLOBAL from './../globals/globals';
+
+export default class Canvas {
     constructor(canvas){
 
         this.canvas = canvas;
@@ -7,5 +9,7 @@ export class Canvas {
         this.canvas.height = document.documentElement.clientHeight;
         this.w = this.canvas.width;
         this.h = this.canvas.height;
+
+        GLOBAL.CANVAS = this; //bind this canvas context to global
     }
 }

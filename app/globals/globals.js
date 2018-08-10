@@ -1,3 +1,4 @@
 export default {
-    GGO: undefined
+    GAME: undefined,
+    CANVAS: undefined
 }

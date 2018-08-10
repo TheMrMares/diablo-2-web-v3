@@ -1,4 +1,4 @@
-export class Loop {
+export default class Loop {
     constructor({maxFPS = 60} = {}){
         this.maxFPS = maxFPS;
         this.fps = this.maxFPS;

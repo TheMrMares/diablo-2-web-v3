@@ -1,17 +1,19 @@
-import GLOBALS from './../globals/globals';
+import GLOBAL from './../globals/globals';
 
-import {Loop} from './Loop';
-import {guiUnit} from './gui/guiUnit';
+import Loop from './Loop';
+import Button from './gui/Button';
 
-export class Game {
-    constructor({canvas} = {}){
+export default class Game {
+    // ### CONSTRUCTOR ###
+    constructor({canvas, mode = 0}){
 
         this.canvas = canvas;
         this.drawground = canvas.context;
         this.loop = new Loop({maxFPS: 60});
+        this.mode = mode;
 
-        GLOBALS.GGO = this;
-        requestAnimationFrame(this.main.bind(this));
+        GLOBAL.GAME = this; //bind this for global game object
+        requestAnimationFrame(this.main.bind(this)); //start game loop
     }
     // ### REGULAR FXS ###
     getCanvasWidth() {
@@ -33,7 +35,6 @@ export class Game {
     // --- DRAW ---
     draw(){
         document.querySelector('#gameFps').textContent = `${Math.round(this.loop.fps)} fps`;
-
     }
 
     // --- DEATH SPIRAL EMERGENCY ----
@@ -42,7 +43,7 @@ export class Game {
         console.log('Panic!');
     }
 
-    // !!! GAME LOOP 1!!
+    // !!! GAME LOOP !!!
     main(timestamp){
 
         if (timestamp < this.loop.lastFrameTimeMs + (1000 / this.loop.maxFPS)) {
