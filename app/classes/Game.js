@@ -1,8 +1,10 @@
 import GLOBAL from './../globals/globals';
+import {createImage} from './../globals/functions';
+
+import sampleButtonURL from './../textures/gui/menu-button.png';
 
 import Loop from './Loop';
 import Button from './gui/Button';
-import Button from './gui/View';
 import View from './gui/View';
 
 export default class Game {
@@ -18,11 +20,22 @@ export default class Game {
         this.my = null;
 
         this.views = [];
+        this.activeView = 0;
 
         document.addEventListener('mousemove', this.mouseMove.bind(this));
         document.addEventListener('click', this.mouseClick.bind(this));
         
         GLOBAL.GAME = this; //bind this for global game object
+        this.constructed();
+    }
+    constructed(){
+
+        this.views.push(
+            new View({
+                buttons: [new Button({x: {m: 0}, y: {m: 0}, w: 200, h: 50, background: createImage(sampleButtonURL)})]
+            })
+        );
+
         requestAnimationFrame(this.main.bind(this)); //start game loop
     }
     // ### REGULAR FXS ###
@@ -42,16 +55,16 @@ export default class Game {
     }
     // ### RELATED TO GAME LOOP ###
     update(delta){
-        this.bx += this.vx * delta;
-        if(this.bx >= 200){
-            this.vx = -0.08;
-        }
-        if(this.bx <= 50){
-            this.vx = 0.08;
-        }
+
     }
     draw(){
         document.querySelector('#gameFps').textContent = `${Math.round(this.loop.fps)} fps`;
+        this.drawground.fillStyle = 'black';
+        this.drawground.fillRect(0,0,this.canvas.w,this.canvas.h);
+
+        this.views[this.activeView].buttons.forEach((item , index) => {
+            item.draw();
+        });
     }
     panic() {
         this.loop.delta = 0;
